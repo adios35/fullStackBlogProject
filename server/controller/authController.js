@@ -67,7 +67,7 @@ export async function login(req, res) {
       data: { refresh_token: refreshToken },
     });
     // Return access token and refresh token to client
-    res.json({ accessToken });
+    res.json({ accessToken, user: exist });
   } catch (error) {
     res.sendStatus(500);
   }

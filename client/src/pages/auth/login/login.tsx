@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
+import { useUser } from "../user/currentUser";
 axios.defaults.withCredentials = true;
 interface User {
   email: string;
@@ -11,8 +13,8 @@ interface User {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUser: setCurrentUser } = useUser();
   const [user, setUser] = React.useState({} as User);
-  const [token, setToken] = React.useState("");
   const [error, setError] = React.useState("");
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -43,6 +45,7 @@ const Login = () => {
         }
       );
 
+      setCurrentUser(res.data.user);
       const token = await res.data.accessToken;
       // console.log(token);
       setUser({ email: "", password: "" });
@@ -50,7 +53,7 @@ const Login = () => {
       // Store the token in local storage or in a state variable in your React component
       // setToken(token);
       // toast("you're logged i;
-      navigate("/dashboard", { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
       setError(error?.response?.data?.msg);
       // Handle any errors
@@ -64,7 +67,7 @@ const Login = () => {
     }));
   }
   return (
-    <div className="login max-w-sm shadow-md bg-slate-700 w-full rounded-md ">
+    <div className="login max-w-sm shadow-md  w-full rounded-md ">
       <h1 className="text-3xl text-center mt-5">Login</h1>
 
       <form action="" className="w-full p-5 flex flex-col items-center">
@@ -115,7 +118,10 @@ const Login = () => {
             </div>
           </div>
         )}
-        <button onClick={handleLogin} className="btn mt-5 btn-md">
+        <button
+          onClick={handleLogin}
+          className="btn mt-5 btn-success text-white btn-md"
+        >
           Login
         </button>
         <p className="text-sm">

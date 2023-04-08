@@ -1,4 +1,5 @@
 import cors from "cors";
+import fileUpload from "express-fileupload";
 import { PrismaClient } from "@prisma/client";
 export const client = new PrismaClient();
 // const io = new Server(httpServer, { cors: { origin: '*' } });
@@ -15,12 +16,19 @@ const app = express();
 // const httpServer = createServer(app);
 app.use(express.json());
 app.use(
+  fileUpload({
+    useTempFiles: true,
+    limits: { fileSize: 50 * 2024 * 2024 },
+  })
+);
+app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
   })
 );
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 app.get("/profile", verifyToken, (req, res) => {
   res.json({ msg: "you authorized" });

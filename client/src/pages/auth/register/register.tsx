@@ -65,7 +65,7 @@ const Register = () => {
     }));
   }
   return (
-    <div className="Register max-w-sm shadow-md bg-slate-700 w-full rounded-md ">
+    <div className="Register max-w-sm shadow-md  w-full rounded-md ">
       <h1 className="text-3xl text-center mt-5">Register</h1>
       <form action="" className="w-full p-5 flex flex-col items-center">
         <div className="form-control w-full max-w-xs">

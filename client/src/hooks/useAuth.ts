@@ -7,7 +7,7 @@ const TOKEN_API_URL = "http://localhost:3000/token";
 const useAuth = () => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<null | any>(null);
-
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -16,6 +16,7 @@ const useAuth = () => {
         setToken(token);
         const decoded = await jwt_decode(token);
         setIsAuthenticated(decoded);
+        setIsLogin(true);
       } catch (error) {
         console.log(error);
       }
@@ -31,6 +32,7 @@ const useAuth = () => {
         setToken(token);
         const decoded = await jwt_decode(token);
         setIsAuthenticated(decoded);
+        setIsLogin(true);
       } catch (error) {
         console.log(error);
       }
@@ -38,7 +40,7 @@ const useAuth = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return { token, isAuthenticated };
+  return { token, isAuthenticated, isLogin, setIsLogin, setToken };
 };
 
 export default useAuth;
