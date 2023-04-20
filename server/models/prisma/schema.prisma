@@ -18,15 +18,25 @@ model User {
   refresh_token String?
   password      String
   posts         Post[]
+  photoURL      String?
 }
 
 model Post {
   id        String    @id @default(uuid())
   title     String
-  content   String
+  content   String    @db.VarChar(2000)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   author    User      @relation(fields: [authorId], references: [id])
   authorId  String
   image     String?
+  // comments  Comments[]
 }
+
+// model Comments {
+//   createdAt DateTime @default(now())
+//   id        String   @id @default(uuid())
+//   name      String
+//   post      Post     @relation(fields: [postid], references: [id])
+//   postid    String
+// }

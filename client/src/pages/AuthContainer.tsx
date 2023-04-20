@@ -3,7 +3,7 @@ import React from "react";
 
 const AuthContainer = () => {
   return (
-    <div className="container w-screen grid place-items-center h-screen ">
+    <div className="container w-screen  grid place-items-center h-[70vh] ">
       <Outlet />
     </div>
   );

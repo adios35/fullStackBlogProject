@@ -46,6 +46,8 @@ const Login = () => {
       );
 
       setCurrentUser(res.data.user);
+      console.log(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       const token = await res.data.accessToken;
       // console.log(token);
       setUser({ email: "", password: "" });

@@ -2,8 +2,21 @@ import { PrismaClient } from "@prisma/client";
 export const client = new PrismaClient();
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { v2 as cloudinary } from "cloudinary";
+// import multer from "multer";
+
+cloudinary.config({
+  //eslint-disable-next-line
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  //eslint-disable-next-line
+  api_key: process.env.CLOUDINARY_API_KEY,
+  //eslint-disable-next-line
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 export async function register(req, res) {
   const { email, password } = req.body;
+  const file = req.files.photoURL;
   if (!email || !password)
     return res.status(400).json({ msg: "masukan input" });
   try {
@@ -15,11 +28,23 @@ export async function register(req, res) {
     if (userExists) {
       return res.status(409).json({ msg: "Email already taken" });
     }
+
+    const data = await cloudinary.uploader
+      .upload(file.tempFilePath, {
+        public_id: Date.now(),
+        resource_type: "auto",
+        folder: "users",
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      });
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await client.user.create({
       data: {
         email,
         password: hashedPassword,
+        photoURL: data.url,
       },
     });
     res.status(201).send({ msg: "success", user });

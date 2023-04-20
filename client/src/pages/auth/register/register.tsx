@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 interface User {
   email: string;
   password: string;
+  photoURL?: File;
 }
 
 const Register = () => {
@@ -19,10 +20,22 @@ const Register = () => {
     const { email, password } = user;
     if (!email || !password) return;
     try {
-      const response = axios.post("http://localhost:3000/auth/register", {
-        email,
-        password,
-      });
+      const formData = new FormData();
+
+      // Append email and password fields
+      formData.append("email", user.email);
+      formData.append("password", user.password);
+
+      // Append photoURL field if it exists
+      if (user.photoURL) {
+        formData.append("photoURL", user.photoURL);
+      }
+
+      // Send formData to the server
+      const response = axios.post(
+        "http://localhost:3000/auth/register",
+        formData
+      );
 
       const res = await toast.promise(
         response,
@@ -57,13 +70,58 @@ const Register = () => {
       // Handle any errors
     }
   }
+  // async function handleRegister(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   const { email, password } = user;
+  //   if (!email || !password) return;
+  //   try {
+  //     const response = axios.post("http://localhost:3000/auth/register", {
+  //       email,
+  //       password,
+  //     });
+
+  //     const res = await toast.promise(
+  //       response,
+  //       {
+  //         loading: "Loading",
+  //         success: (data) => `account created`,
+  //         error: (err) => `${err.response.data.msg}`,
+  //       },
+  //       {
+  //         style: {
+  //           minWidth: "250px",
+  //           background: "#191D24",
+  //           color: "white",
+  //         },
+  //         success: {
+  //           duration: 1000,
+  //           // icon: "👍",
+  //         },
+  //       }
+  //     );
+
+  //     const result = await res.data.msg;
+  //     setUser({ email: "", password: "" });
+  //     setError("");
+  //     navigate("/auth/login", { replace: true });
+  //     // Store the token in local storage or in a state variable in your React component
+  //   } catch (error) {
+  //     // setError(error?.response?.data?.msg);
+  //     console.log(error);
+  //     setError(error.response.data.msg);
+
+  //     // Handle any errors
+  //   }
+  // }
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.currentTarget;
+    const { name, value, type, files } = e.currentTarget;
     setUser((pre) => ({
       ...pre,
-      [name]: value,
+      [name]: type == "file" ? files![0] : value,
     }));
   }
+  console.log(user);
+
   return (
     <div className="Register max-w-sm shadow-md  w-full rounded-md ">
       <h1 className="text-3xl text-center mt-5">Register</h1>
@@ -92,6 +150,13 @@ const Register = () => {
             type="password"
             placeholder="Type here"
             className="input input-bordered w-full max-w-"
+          />
+          <input
+            onChange={handleInput}
+            name="photoURL"
+            type="file"
+            // placeholder="Type here"
+            className="input mt-2 input-bordered w-full max-w-"
           />
         </div>
         {error && (
